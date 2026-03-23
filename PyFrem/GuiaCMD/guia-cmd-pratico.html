@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Prático — Prompt de Comando (CMD)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --card: #1c2330;
+    --border: #2d3748;
+    --accent: #00d9a3;
+    --accent2: #7c6af7;
+    --warn: #f59e0b;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --cmd-bg: #090c10;
+    --cmd-green: #39ff14;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #0e1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0,217,163,.07) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 60% at 10% 80%, rgba(124,106,247,.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--muted);
+    font-size: .98rem;
+    max-width: 640px;
+    font-weight: 300;
+  }
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .badge {
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: .78rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge.green { border-color: rgba(0,217,163,.4); color: var(--accent); }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  /* ── INTRO BLOCK ── */
+  .intro-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+  }
+  .intro-block h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent2);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: .8rem;
+  }
+  .intro-block p { color: var(--muted); font-size: .95rem; margin-bottom: 10px; }
+  .intro-block p:last-child { margin-bottom: 0; }
+  .intro-block strong { color: var(--text); font-weight: 600; }
+
+  /* ── HOW TO OPEN CMD ── */
+  .how-open {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+  }
+  .how-open h3 {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--warn);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .step-num {
+    background: var(--warn);
+    color: #000;
+    font-size: .72rem;
+    font-weight: 800;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-card p { font-size: .88rem; color: var(--muted); line-height: 1.5; }
+  .step-card p strong { color: var(--text); }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── EXERCISE CARD ── */
+  .exercise {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    transition: border-color .25s;
+  }
+  .exercise:hover { border-color: rgba(0,217,163,.3); }
+
+  .ex-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+  .ex-num {
+    background: var(--accent);
+    color: #000;
+    font-size: .78rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ex-title { font-size: 1rem; font-weight: 700; }
+  .ex-objective { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+
+  .ex-body { padding: 22px 24px; display: grid; gap: 18px; }
+
+  /* CMD BOX */
+  .cmd-box {
+    background: var(--cmd-bg);
+    border: 1px solid rgba(57,255,20,.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .cmd-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,.04);
+    border-bottom: 1px solid rgba(57,255,20,.1);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .cmd-label {
+    font-size: .7rem;
+    color: rgba(57,255,20,.5);
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: auto;
+  }
+  .cmd-content { padding: 16px 20px; }
+  .cmd-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .88rem;
+    color: var(--cmd-green);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .cmd-line:last-child { margin-bottom: 0; }
+  .prompt { color: rgba(57,255,20,.45); flex-shrink: 0; }
+  .cmd-comment {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    color: rgba(57,255,20,.35);
+    margin-top: 2px;
+    display: block;
+    margin-left: 28px;
+  }
+
+  /* INFO PILLS */
+  .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: .8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .pill.command {
+    background: rgba(124,106,247,.15);
+    border: 1px solid rgba(124,106,247,.35);
+    color: #a89ffc;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pill.tip {
+    background: rgba(245,158,11,.08);
+    border: 1px solid rgba(245,158,11,.25);
+    color: var(--warn);
+  }
+  .pill.danger {
+    background: rgba(239,68,68,.08);
+    border: 1px solid rgba(239,68,68,.25);
+    color: #f87171;
+  }
+
+  /* EXPLANATION */
+  .explanation {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: .9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .explanation strong { color: var(--text); }
+  .explanation code {
+    background: rgba(255,255,255,.07);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .83rem;
+    color: #a89ffc;
+  }
+
+  /* TASK BOX */
+  .task-box {
+    background: rgba(0,217,163,.05);
+    border: 1px solid rgba(0,217,163,.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: .9rem;
+  }
+  .task-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .task-box p { color: var(--muted); }
+  .task-box strong { color: var(--text); }
+
+  /* ── QUICK REF TABLE ── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .ref-table th {
+    background: rgba(255,255,255,.04);
+    text-align: left;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ref-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: .88rem;
+    vertical-align: top;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table .cmd-cell {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: .85rem;
+  }
+  .ref-table .desc-cell { color: var(--muted); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .82rem;
+  }
+  .footer strong { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 24px 36px; }
+    .ex-body { padding: 18px; }
+    .ex-header { padding: 16px 18px; }
+    .how-open { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<div class="hero">
+  <div style="max-width:900px;margin:0 auto;position:relative;z-index:1;">
+    <div class="hero-label">SENAI CFP 914 — Informática</div>
+    <h1>Guia Prático de<br><span>Prompt de Comando</span></h1>
+    <p>Leia com atenção antes de iniciar os exercícios. Aqui você vai entender o <strong>que</strong> é cada comando, <strong>como</strong> ele funciona e <strong>por que</strong> ele existe — antes de digitá-lo.</p>
+    <div class="badge-row">
+      <span class="badge green">Windows CMD</span>
+      <span class="badge">10 Exercícios</span>
+      <span class="badge">Iniciante</span>
+      <span class="badge">Modo Administrador</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ CONTAINER ══════════════════ -->
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro-block">
+    <h2>📌 O que é o CMD e por que aprender?</h2>
+    <p>O <strong>Prompt de Comando (CMD)</strong> é uma interface de texto do Windows onde você conversa diretamente com o sistema operacional usando comandos escritos. Sem janelas, sem cliques — você digita uma instrução e o sistema executa.</p>
+    <p>Profissionais de TI usam o CMD diariamente para automatizar tarefas, gerenciar servidores, diagnosticar problemas de rede e configurar sistemas com muito mais velocidade do que pelo modo gráfico. <strong>Dominar o CMD é uma habilidade fundamental para qualquer técnico de informática.</strong></p>
+  </div>
+
+  <!-- COMO ABRIR -->
+  <div class="how-open">
+    <h3>⚡ Como abrir o CMD antes de começar</h3>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <p>Pressione <strong>Win + R</strong> no teclado para abrir a janela "Executar"</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <p>Digite <strong>cmd</strong> no campo e pressione <strong>Enter</strong></p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <p>Para abrir <strong>como Administrador</strong>, clique com botão direito no CMD e escolha "Executar como administrador"</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <p>O cursor piscando após <strong>C:\Users\seu_cpf&gt;</strong> significa que o CMD está pronto para receber comandos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXERCÍCIOS ══ -->
+  <div class="section-title">Lista de Exercícios — Explicação Prática</div>
+
+  <!-- ── EX 1 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">01</div>
+      <div>
+        <div class="ex-title">Listando Diretórios e Arquivos</div>
+        <div class="ex-objective">Listar o conteúdo de uma pasta</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">dir</span>
+        <span class="pill tip">💡 "dir" vem de <em>directory</em> (diretório)</span>
+      </div>
+      <div class="explanation">
+        O <code>dir</code> é o equivalente ao "olhar para dentro de uma pasta". Ele mostra o nome, tamanho e data de todos os arquivos e subpastas no local onde você está. É sempre o primeiro comando a usar quando você quer saber "o que tem aqui?".
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>cd Windows</span></div>
+          <span class="cmd-comment">:: navega até a pasta Windows primeiro</span>
+          <div class="cmd-line" style="margin-top:8px"><span class="prompt">C:\Windows&gt;</span><span>dir</span></div>
+          <span class="cmd-comment">:: lista todos os arquivos e subpastas de C:\Windows</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Navegue até <strong>C:\Windows</strong> e execute o comando <code>dir</code>. Observe a lista exibida: cada linha é um arquivo ou pasta. A coluna à esquerda mostra a data, no meio o tamanho e à direita o nome.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 2 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">02</div>
+      <div>
+        <div class="ex-title">Criando um Novo Diretório</div>
+        <div class="ex-objective">Criar uma nova pasta no diretório atual</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">mkdir</span>
+        <span class="pill tip">💡 "mkdir" = <em>make directory</em> (criar diretório)</span>
+      </div>
+      <div class="explanation">
+        O <code>mkdir</code> cria uma pasta nova. É o equivalente a clicar com botão direito no Explorer e escolher "Nova pasta" — mas muito mais rápido. Você pode criar a pasta no local atual ou informar um caminho completo.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>mkdir C:\Users\%username%\Desktop\ExerciciosCMD</span></div>
+          <span class="cmd-comment">:: cria a pasta ExerciciosCMD na Área de Trabalho</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Crie a pasta <strong>ExerciciosCMD</strong> na Área de Trabalho. Depois abra o Explorer para confirmar que a pasta apareceu. <strong>%username%</strong> é uma variável automática que representa seu nome de usuário no Windows — o CMD substitui ela sozinho.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 3 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">03</div>
+      <div>
+        <div class="ex-title">Navegando entre Diretórios</div>
+        <div class="ex-objective">Mover-se entre diretórios</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">cd</span>
+        <span class="pill tip">💡 "cd" = <em>change directory</em> (mudar diretório)</span>
+      </div>
+      <div class="explanation">
+        O <code>cd</code> é o comando de navegação — você "entra" e "sai" de pastas com ele. Use <code>cd nome_da_pasta</code> para entrar, <code>cd ..</code> para voltar um nível acima e <code>cd \</code> para ir direto à raiz do disco.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>cd "Program Files"</span></div>
+          <span class="cmd-comment">:: entra na pasta Program Files (aspas por causa do espaço no nome)</span>
+          <div class="cmd-line" style="margin-top:8px"><span class="prompt">C:\Program Files&gt;</span><span>cd \</span></div>
+          <span class="cmd-comment">:: volta direto para a raiz C:\</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Saia de <strong>C:\</strong>, navegue até <strong>C:\Program Files</strong> e volte para <strong>C:\</strong>. Observe que o caminho exibido no prompt sempre muda conforme você navega — isso confirma onde você está no sistema.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 4 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">04</div>
+      <div>
+        <div class="ex-title">Renomeando Arquivos</div>
+        <div class="ex-objective">Alterar o nome de um arquivo existente</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">ren</span>
+        <span class="pill tip">💡 "ren" = <em>rename</em> (renomear)</span>
+      </div>
+      <div class="explanation">
+        O <code>ren</code> renomeia um arquivo. A sintaxe é <code>ren nome_atual novo_nome</code>. Atenção: o arquivo precisa existir na pasta onde você está navegando. Você <strong>não</strong> move o arquivo, apenas muda o nome.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\Users\seu_cpf\ExerciciosCMD&gt;</span><span>ren arquivo1.txt arquivo_renomeado.txt</span></div>
+          <span class="cmd-comment">:: renomeia arquivo1.txt para arquivo_renomeado.txt</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Antes de renomear, crie o arquivo de teste com o comando <code>echo teste &gt; arquivo1.txt</code> enquanto estiver dentro da pasta <strong>ExerciciosCMD</strong>. Depois execute o <code>ren</code> e confirme com <code>dir</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 5 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">05</div>
+      <div>
+        <div class="ex-title">Copiando Arquivos</div>
+        <div class="ex-objective">Copiar arquivos de um lugar para outro</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">copy</span>
+        <span class="pill tip">💡 O arquivo original permanece no lugar</span>
+      </div>
+      <div class="explanation">
+        O <code>copy</code> copia um arquivo para outro local, mantendo o original intacto. A sintaxe é <code>copy origem destino</code>. Se a pasta de destino não existir, o comando retornará erro — então crie-a antes com <code>mkdir</code>.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>mkdir C:\Users\%username%\Backup</span></div>
+          <span class="cmd-comment">:: cria a pasta Backup (se ainda não existir)</span>
+          <div class="cmd-line" style="margin-top:8px"><span class="prompt">C:\&gt;</span><span>copy C:\Users\%username%\ExerciciosCMD\documento.txt C:\Users\%username%\Backup</span></div>
+          <span class="cmd-comment">:: copia o arquivo para a pasta Backup</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Crie primeiro o arquivo <strong>documento.txt</strong> dentro de ExerciciosCMD com <code>echo conteudo &gt; documento.txt</code>. Em seguida, crie a pasta <strong>Backup</strong> e execute o <code>copy</code>. Verifique com <code>dir</code> que o arquivo existe nos dois lugares.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 6 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">06</div>
+      <div>
+        <div class="ex-title">Movendo Arquivos</div>
+        <div class="ex-objective">Mover arquivos entre diretórios</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">move</span>
+        <span class="pill tip">💡 Diferente do copy: o arquivo sai da origem</span>
+        <span class="pill danger">⚠️ O original é removido</span>
+      </div>
+      <div class="explanation">
+        O <code>move</code> transfere um arquivo de uma pasta para outra — o arquivo <strong>some</strong> da origem e aparece no destino. É como recortar e colar no Explorer. Útil para organizar arquivos sem duplicá-los.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>move C:\Users\%username%\ExerciciosCMD\exemplo.txt C:\Users\%username%\Backup</span></div>
+          <span class="cmd-comment">:: move o arquivo (remove da origem, coloca no destino)</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Crie o arquivo <strong>exemplo.txt</strong> dentro de ExerciciosCMD, depois mova-o para Backup. Confirme com <code>dir</code> nas duas pastas: o arquivo deve aparecer <strong>apenas</strong> em Backup após o comando.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 7 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">07</div>
+      <div>
+        <div class="ex-title">Apagando Arquivos</div>
+        <div class="ex-objective">Remover arquivos específicos</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">del</span>
+        <span class="pill danger">⚠️ Não vai para a Lixeira — é permanente!</span>
+      </div>
+      <div class="explanation">
+        O <code>del</code> apaga arquivos <strong>permanentemente</strong>, sem passar pela Lixeira do Windows. Use com cuidado! Confirme o nome exato do arquivo antes de executar. Se errar o nome, pode apagar o arquivo errado.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\Users\seu_cpf\ExerciciosCMD&gt;</span><span>del arquivo_teste.txt</span></div>
+          <span class="cmd-comment">:: apaga o arquivo definitivamente (sem confirmação)</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Crie o arquivo <strong>arquivo_teste.txt</strong> com <code>echo teste &gt; arquivo_teste.txt</code>, confirme com <code>dir</code> que ele existe, e então apague com <code>del</code>. Rode <code>dir</code> novamente para confirmar que sumiu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 8 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">08</div>
+      <div>
+        <div class="ex-title">Removendo Diretórios</div>
+        <div class="ex-objective">Deletar pastas</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">rmdir</span>
+        <span class="pill tip">💡 Atenção: a pasta precisa estar vazia</span>
+        <span class="pill danger">⚠️ Use /S para pastas com conteúdo</span>
+      </div>
+      <div class="explanation">
+        O <code>rmdir</code> (ou <code>rd</code>) remove pastas. Por padrão, só funciona em pastas <strong>vazias</strong>. Para deletar uma pasta com arquivos dentro, adicione a opção <code>/S</code> (que remove tudo recursivamente) e <code>/Q</code> para não pedir confirmação.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>mkdir C:\Users\%username%\Desktop\PastaTeste</span></div>
+          <span class="cmd-comment">:: cria a pasta para o exercício</span>
+          <div class="cmd-line" style="margin-top:8px"><span class="prompt">C:\&gt;</span><span>rmdir C:\Users\%username%\Desktop\PastaTeste</span></div>
+          <span class="cmd-comment">:: remove a pasta vazia</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Crie a pasta <strong>PastaTeste</strong> na Área de Trabalho com <code>mkdir</code>, confirme visualmente no Explorer, e então use o <code>rmdir</code> para deletá-la. Verifique que desapareceu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 9 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">09</div>
+      <div>
+        <div class="ex-title">Criando uma Estrutura de Pastas</div>
+        <div class="ex-objective">Criar hierarquia de diretórios com um único comando</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">mkdir com /</span>
+        <span class="pill tip">💡 Cria pastas aninhadas automaticamente</span>
+      </div>
+      <div class="explanation">
+        O <code>mkdir</code> também aceita caminhos com subpastas. Ao escrever <code>mkdir Projetos\Python</code>, ele cria a pasta <strong>Projetos</strong> e, dentro dela, a subpasta <strong>Python</strong> — tudo de uma vez. Sem esse recurso, você teria que criar pasta por pasta.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>mkdir C:\Users\%username%\Projetos\Python</span></div>
+          <span class="cmd-comment">:: cria Projetos e Python (dentro de Projetos) de uma vez</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Execute o comando acima e depois abra o Explorer em <strong>C:\Users\seu_cpf</strong>. Você deve ver a pasta <strong>Projetos</strong> com a subpasta <strong>Python</strong> dentro. Isso simula uma organização profissional de projetos de desenvolvimento.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EX 10 ── -->
+  <div class="exercise">
+    <div class="ex-header">
+      <div class="ex-num">10</div>
+      <div>
+        <div class="ex-title">Exibindo a Estrutura de Diretórios</div>
+        <div class="ex-objective">Visualizar a hierarquia de pastas</div>
+      </div>
+    </div>
+    <div class="ex-body">
+      <div class="info-row">
+        <span class="pill command">tree</span>
+        <span class="pill tip">💡 Mostra a árvore de pastas visualmente</span>
+      </div>
+      <div class="explanation">
+        O <code>tree</code> exibe a estrutura de pastas em formato de "árvore", facilitando a visualização da hierarquia. Use <code>tree /F</code> para incluir também os arquivos. É muito útil para documentar ou inspecionar a organização de um projeto.
+      </div>
+      <div class="cmd-box">
+        <div class="cmd-topbar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="cmd-label">Prompt de Comando</span></div>
+        <div class="cmd-content">
+          <div class="cmd-line"><span class="prompt">C:\&gt;</span><span>tree C:\Users\%username%\Projetos</span></div>
+          <span class="cmd-comment">:: exibe a árvore de diretórios de Projetos</span>
+          <div class="cmd-line" style="margin-top:8px"><span class="prompt">C:\&gt;</span><span>tree C:\Users\%username%\Projetos /F</span></div>
+          <span class="cmd-comment">:: /F inclui os arquivos na visualização</span>
+        </div>
+      </div>
+      <div class="task-box">
+        <div class="task-label">📋 Sua Tarefa</div>
+        <p>Execute o <code>tree</code> na pasta <strong>Projetos</strong> criada no exercício anterior. O resultado deve mostrar a subpasta <strong>Python</strong> aninhada. Experimente também com o parâmetro <code>/F</code> para ver todos os arquivos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA DE REFERÊNCIA RÁPIDA -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:48px;">
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);">
+      <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:var(--accent2);font-weight:700;margin-bottom:4px;">Referência Rápida</div>
+      <div style="font-weight:700;font-size:1rem;">Tabela de Comandos — Guia de Consulta</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Para que serve</th>
+            <th>Exemplo básico</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cmd-cell">dir</td>
+            <td class="desc-cell">Listar arquivos e pastas do diretório atual</td>
+            <td class="cmd-cell">dir</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">mkdir</td>
+            <td class="desc-cell">Criar nova pasta (ou estrutura de pastas)</td>
+            <td class="cmd-cell">mkdir NovaPasta</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">cd</td>
+            <td class="desc-cell">Navegar entre diretórios</td>
+            <td class="cmd-cell">cd Desktop</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">cd ..</td>
+            <td class="desc-cell">Voltar um nível na hierarquia</td>
+            <td class="cmd-cell">cd ..</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">ren</td>
+            <td class="desc-cell">Renomear arquivo ou pasta</td>
+            <td class="cmd-cell">ren velho.txt novo.txt</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">copy</td>
+            <td class="desc-cell">Copiar arquivo (original permanece)</td>
+            <td class="cmd-cell">copy arq.txt C:\Destino</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">move</td>
+            <td class="desc-cell">Mover arquivo (remove da origem)</td>
+            <td class="cmd-cell">move arq.txt C:\Destino</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">del</td>
+            <td class="desc-cell">Apagar arquivo permanentemente</td>
+            <td class="cmd-cell">del arquivo.txt</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">rmdir</td>
+            <td class="desc-cell">Remover pasta (vazia por padrão)</td>
+            <td class="cmd-cell">rmdir PastaVazia</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">tree</td>
+            <td class="desc-cell">Exibir estrutura de pastas em árvore</td>
+            <td class="cmd-cell">tree C:\Users\cpf</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">cls</td>
+            <td class="desc-cell">Limpar a tela do CMD</td>
+            <td class="cmd-cell">cls</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">echo texto &gt; arq</td>
+            <td class="desc-cell">Criar arquivo de texto rápido para testes</td>
+            <td class="cmd-cell">echo teste &gt; teste.txt</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>SENAI CFP 914</strong> — Presidente Prudente, SP &nbsp;|&nbsp; Informática &amp; Redes &nbsp;|&nbsp; Material de apoio para lista de exercícios de CMD
+</div>
+
+</body>
+</html>

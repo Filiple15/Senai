@@ -1,0 +1,51 @@
+At 1
+
+cd C:\Windows
+dir
+
+
+At2
+
+cd %USERPROFILE%\Desktop
+mkdir ExerciciosCMD
+
+At3
+
+cd C:\
+cd "Program Files"
+cd \
+
+At4
+
+ren arquivo1.txt arquivo_renomeado.txt
+
+
+At5
+
+copy C:\Users\[seu_usuario]\ExerciciosCMD\documento.txt C:\Users\[seu_usuario]\Backup
+
+
+At6
+
+move C:\Users\[seu_usuario]\ExerciciosCMD\exemplo.txt C:\Users\[seu_usuario]\Backup
+
+
+At7
+
+del C:\Users\[seu_usuario]\ExerciciosCMD\arquivo_teste.txt
+
+
+At8
+
+cd %USERPROFILE%\Desktop
+rmdir PastaTeste
+
+
+At9
+
+mkdir C:\Users\[seu_usuario]\Projetos\Python
+
+
+At10
+
+tree C:\Users\[seu_usuario]\Projetos
